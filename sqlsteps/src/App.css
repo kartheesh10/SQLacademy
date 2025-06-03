@@ -1,0 +1,173 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.App-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.App-main-content {
+  display: flex;
+  flex-direction: row; /* Side-by-side layout for larger screens */
+  flex-grow: 1;
+  padding: 0 20px;
+  gap: 20px; /* Space between panes */
+  align-items: stretch; /* Make panes equal height by default */
+}
+
+.problem-pane {
+  flex: 1; /* Takes up 1 part of available space */
+  padding: 15px;
+  background-color: #fdfdff; /* Slightly off-white */
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: flex; /* To allow ProblemInput to grow */
+  flex-direction: column;
+}
+
+.interaction-pane {
+  flex: 1.5; /* Takes up 1.5 parts of available space, making it wider */
+  padding: 15px;
+  background-color: #fdfdff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column; /* Stack GuidanceDisplay and SqlEditor vertically */
+  gap: 15px; /* Space between GuidanceDisplay and SqlEditor */
+}
+
+/* Ensure components within panes take up full height or grow as needed */
+.problem-input-container,
+.guidance-display-container,
+.sql-editor-container {
+  border: 1px solid #e0e0e0; /* Slightly lighter border for components */
+  padding: 15px; /* Consistent padding within components */
+  border-radius: 6px; /* Slightly smaller radius for components */
+  background-color: #ffffff; /* White background for components */
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Softer shadow for components */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Specific adjustments for components to grow within their pane containers */
+.problem-input-container {
+  flex-grow: 1; /* ProblemInput takes full height of problem-pane */
+}
+.guidance-display-container {
+  flex-grow: 1; /* GuidanceDisplay takes most of the space in interaction-pane */
+  min-height: 200px; /* Minimum height for guidance */
+}
+.sql-editor-container {
+  /* SqlEditor can have a fixed or minimum height, or also grow if desired */
+  min-height: 200px; /* Minimum height for SQL editor */
+}
+
+
+.problem-input-container h2,
+.sql-editor-container h2,
+.guidance-display-container h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #e8e8e8; /* Lighter border for headings */
+  padding-bottom: 10px;
+  font-size: 1.3rem; /* Slightly larger heading for components */
+}
+
+/* SqlEditor specific styling (textarea and buttons) - this might be better in SqlEditor.css */
+/* but including some here for context if it was previously in App.css */
+.sql-editor-container textarea {
+  /* Styles for textarea are now primarily in SqlEditor.css */
+  /* Ensure it fills its container if SqlEditor.css is minimal */
+  /* width: 100%; */
+  /* box-sizing: border-box; */
+}
+
+/* Styles for buttons are now primarily in SqlEditor.css */
+/* .sql-editor-container button { ... } */
+
+
+.App-footer {
+  background-color: #282c34; /* Match header for consistency */
+  padding: 15px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: white; /* White text on dark background */
+  /* border-top: 1px solid #ddd; */ /* No border needed if dark */
+  margin-top: auto; /* Pushes footer to the bottom */
+}
+
+/* Responsive adjustments for two-pane layout */
+@media (max-width: 900px) { /* Adjusted breakpoint for better stacking */
+  .App-main-content {
+    flex-direction: column; /* Stack panes on smaller screens */
+  }
+
+  .problem-pane,
+  .interaction-pane {
+    flex-basis: auto; /* Allow them to take full width when stacked */
+    margin-bottom: 20px; /* Space between stacked panes */
+  }
+
+  .interaction-pane {
+    gap: 20px; /* Maintain gap when stacked */
+  }
+}
+
+
+/* Styling for ProblemInput.js form elements */
+.problem-input-form { /* Styles for the form itself if needed, e.g., width */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow form to grow within its container */
+}
+
+.problem-input-form .form-group {
+  margin-bottom: 15px;
+}
+
+.problem-input-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333; /* Darker text for labels */
+}
+
+.problem-input-form textarea {
+  width: calc(100% - 22px); /* Full width accounting for padding and border */
+  padding: 10px;
+  border: 1px solid #ccc; /* Slightly darker border for better visibility */
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  box-sizing: border-box; /* Ensures padding/border don't add to width */
+  resize: vertical; /* Allow vertical resizing, disable horizontal */
+  min-height: 60px; /* Minimum height for textareas */
+}
+
+.problem-input-form .submit-problem-button {
+  background-color: #4CAF50; /* A distinct green for the submit button */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease-in-out;
+  align-self: flex-start; /* Prevent button from stretching full width */
+}
+
+.problem-input-form .submit-problem-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}

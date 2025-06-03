@@ -1,0 +1,60 @@
+.sql-editor-container {
+    /* Base styles are in App.css */
+    /* This file is for specific styles of SqlEditor's content */
+    display: flex;
+    flex-direction: column;
+}
+
+.sql-editor-container textarea {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    flex-grow: 1; /* Textarea takes available vertical space */
+    resize: vertical;
+    min-height: 100px; /* Ensure a decent minimum height */
+}
+
+.sql-editor-container textarea:disabled {
+    background-color: #f8f8f8;
+    cursor: not-allowed;
+}
+
+.sql-editor-buttons {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    align-items: center; /* Align items vertically if they wrap or have different heights */
+}
+
+.sql-editor-buttons button {
+    background-color: #007bff; /* Primary button color */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.sql-editor-buttons button:hover:not(:disabled) {
+    background-color: #0056b3; /* Darker on hover */
+}
+
+.sql-editor-buttons button:disabled {
+    background-color: #c0c0c0; /* Grey out when disabled */
+    cursor: not-allowed;
+}
+
+.sql-editor-buttons .hint-button {
+    background-color: #ffc107; /* Amber for hint */
+    color: #333;
+}
+
+.sql-editor-buttons .hint-button:hover:not(:disabled) {
+    background-color: #e0a800; /* Darker amber on hover */
+}

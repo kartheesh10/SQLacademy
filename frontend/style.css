@@ -1,0 +1,111 @@
+/* Basic styling for the SQL Learning Platform */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #0056b3;
+    color: #ffffff;
+    padding: 1rem 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    padding: 20px;
+    gap: 20px; /* Space between sections */
+}
+
+#exercise-section, #editor-section, #results-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+#exercise-section {
+    flex-basis: 100%; /* Take full width initially, or specific width like 30% if side-by-side with editor */
+}
+
+#editor-section {
+    flex-grow: 1; /* Allows editor to take available space */
+    flex-basis: 50%; /* Example: aim for 50% width */
+    display: flex;
+    flex-direction: column;
+}
+
+#results-section {
+    flex-grow: 1;
+    flex-basis: 45%; /* Example: aim for 45% width */
+    border: 1px solid #ddd;
+    min-height: 150px; /* Ensure it's visible even when empty */
+}
+
+h2 {
+    color: #0056b3;
+    border-bottom: 2px solid #eeeeee;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+#sql-query-input {
+    width: calc(100% - 20px); /* Full width minus padding */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    flex-grow: 1; /* Textarea takes available vertical space in editor-section */
+}
+
+#submit-query-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    align-self: flex-start; /* Align button to the start of the flex container */
+}
+
+#submit-query-button:hover {
+    background-color: #218838;
+}
+
+#query-results p {
+    margin-top: 0;
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    #exercise-section, #editor-section, #results-section {
+        flex-basis: 100%; /* Stack elements on smaller screens */
+        margin-bottom: 20px;
+    }
+
+    #editor-section {
+        min-height: 250px; /* Ensure textarea has enough space */
+    }
+}
