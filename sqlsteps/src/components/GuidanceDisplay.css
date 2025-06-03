@@ -41,13 +41,13 @@
 }
 
 /* Sender-specific styling */
-.message.jules {
-  background-color: #e1f5fe; /* Light blue for Jules */
+.message.tutor { /* Renamed from .jules */
+  background-color: #e1f5fe; /* Light blue for Tutor */
   border-left: 4px solid #03a9f4; /* Blue accent */
   color: #01579b;
 }
 
-.message.user { /* If we add user messages to the display later */
+.message.user {
   background-color: #f0f0f0; /* Light grey for User */
   border-left: 4px solid #888;
   color: #333;

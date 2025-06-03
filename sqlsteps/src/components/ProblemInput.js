@@ -2,56 +2,40 @@ import React, { useState } from 'react';
 
 // Accept onProblemSubmit prop
 function ProblemInput({ onProblemSubmit }) {
-  const [problemDescription, setProblemDescription] = useState('');
-  const [tableSchema, setTableSchema] = useState('');
-  // Could add another state for sample data if needed later
-  // const [sampleData, setSampleData] = useState('');
+  const [problemContext, setProblemContext] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission which reloads the page
 
-    if (!problemDescription.trim() || !tableSchema.trim()) {
-      alert("Please provide both a problem description and table schema.");
+    if (!problemContext.trim()) {
+      alert("Please provide the problem context (description and any relevant schema).");
       return;
     }
 
-    // Call the passed-in handler from App.js
-    onProblemSubmit(problemDescription, tableSchema);
+    // Call the passed-in handler from App.js with the single context string
+    onProblemSubmit(problemContext);
 
-    // Optionally clear fields after submission, or let App.js manage this
-    // setProblemDescription('');
-    // setTableSchema('');
+    // Optionally clear field after submission
+    // setProblemContext('');
   };
 
   return (
     <div className="problem-input-container">
       <h2>Define Your SQL Problem</h2>
-      <p>Enter the description of the SQL problem you want to solve and the schema of the relevant table(s).</p>
+      <p>Enter the full context of your SQL problem, including the description, any relevant table schemas (e.g., CREATE TABLE statements), and sample data if applicable, all in the text area below.</p>
       <form onSubmit={handleSubmit} className="problem-input-form">
         <div className="form-group">
-          <label htmlFor="problemDescription">Problem Description:</label>
+          <label htmlFor="problemContext">Problem Context (Description, Schema, Sample Data):</label>
           <textarea
-            id="problemDescription"
-            value={problemDescription}
-            onChange={(e) => setProblemDescription(e.target.value)}
-            rows="6"
-            placeholder="e.g., Select all columns for employees hired after January 1, 2022."
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="tableSchema">Table Schema(s) (CREATE TABLE statements):</label>
-          <textarea
-            id="tableSchema"
-            value={tableSchema}
-            onChange={(e) => setTableSchema(e.target.value)}
-            rows="8"
-            placeholder="e.g., CREATE TABLE Employees (EmployeeID INT PRIMARY KEY, FirstName VARCHAR(50), LastName VARCHAR(50), HireDate DATE);"
+            id="problemContext"
+            value={problemContext}
+            onChange={(e) => setProblemContext(e.target.value)}
+            rows="12" // Increased rows as it's now the only input
+            placeholder="e.g., Problem: Find all employees hired in the last year. Schema: CREATE TABLE Employees (ID INT, Name TEXT, HireDate DATE). Sample Data: INSERT INTO Employees VALUES (1, 'John Doe', '2023-05-15');"
             required
           />
         </div>
         {/*
-        // Optional: Textarea for sample data (INSERT statements)
         <div className="form-group">
           <label htmlFor="sampleData">Sample Data (Optional - INSERT statements):</label>
           <textarea

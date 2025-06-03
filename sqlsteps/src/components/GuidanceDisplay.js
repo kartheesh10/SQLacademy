@@ -5,8 +5,8 @@ function GuidanceDisplay({ messages, isLoading }) {
   if (isLoading) {
     return (
       <div className="guidance-display-container">
-        <h2>Jules' Guidance</h2>
-        <div className="loading-message">Loading guidance from Jules...</div>
+        <h2>Tutor Guidance</h2> {/* Ensure this was changed, it was in previous step */}
+        <div className="loading-message">Loading guidance from Tutor...</div>
       </div>
     );
   }
@@ -14,7 +14,7 @@ function GuidanceDisplay({ messages, isLoading }) {
   if (!messages || messages.length === 0) {
     return (
       <div className="guidance-display-container">
-        <h2>Jules' Guidance</h2>
+        <h2>Tutor Guidance</h2> {/* Ensure this was changed */}
         <p className="placeholder-message">
           Your step-by-step guidance will appear here once you submit a problem.
         </p>
@@ -24,13 +24,15 @@ function GuidanceDisplay({ messages, isLoading }) {
 
   return (
     <div className="guidance-display-container">
-      <h2>Jules' Guidance</h2>
+      <h2>Tutor Guidance</h2> {/* Renamed from Jules */}
       <div className="messages-list">
-        {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.sender.toLowerCase()} ${msg.type || 'text'}`}>
-            <span className="sender-label">{msg.sender}:</span>
-            <p className="message-text">{msg.text}</p>
-          </div>
+        {messages
+          .filter(msg => msg.role !== 'system') // Exclude system-role messages
+          .map((msg) => ( // msg.id is now preferred for key
+            <div key={msg.id} className={`message ${msg.sender.toLowerCase()} ${msg.type || 'text'}`}>
+              <span className="sender-label">{msg.sender}:</span>
+              <p className="message-text">{msg.text}</p>
+            </div>
         ))}
       </div>
     </div>

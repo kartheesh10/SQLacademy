@@ -77,8 +77,9 @@ async function getFirstGuidance(problemDescription, tableSchema, systemPrompt, a
     setTimeout(() => {
       const firstTableNameMatch = tableSchema.match(/CREATE TABLE\s+([^\s(]+)/i);
       const firstTableName = firstTableNameMatch ? firstTableNameMatch[1] : 'the main table';
-      const simulatedResponse = `Okay, I've looked at your problem description and the schema. It seems we need to work with the ${firstTableName} table, among others possibly.
-Let's start by focusing on the core of any SQL query: the \`FROM\` clause. Which table (or tables) do you think we need to retrieve data from for this problem?`;
+      // Ensure simulated response is generic and does not use a name.
+      const simulatedResponse = `Okay, I've reviewed the problem description and schema. It looks like the ${firstTableName} table will be important here.
+To begin, let's figure out the \`FROM\` clause. Which table(s) do you think we'll need to query?`;
       console.log("Returning simulated LLM response for getFirstGuidance:", simulatedResponse);
       resolve(simulatedResponse);
     }, 1000); // Simulate network delay
@@ -105,21 +106,58 @@ async function getLlmResponse(messages, apiKey = "SIMULATED_API_KEY_NOT_USED") {
 
   if (lastUserMessage) {
     const userContent = lastUserMessage.content.toLowerCase();
+    const userContentOriginal = lastUserMessage.content; // Keep original case for some checks if needed
+
+    // Keywords for SQL clauses (very basic check)
+    const isSqlAttempt = userContent.includes("select") || userContent.includes("from") || userContent.includes("where") || userContent.includes("join") || userContent.includes("group by") || userContent.includes("order by");
+    const isShortInput = userContent.length < 15;
+
+
     if (userContent.includes("hint") || userContent.includes("help me") || userContent.includes("clue")) {
       simulatedResponse = "Okay, here's a hint for this step: Think about the specific condition you need to filter by. For example, if you're looking for active users, it might be something like `WHERE status = 'active'`. What do you think?";
     } else if (userContent.includes("solution for this step") || userContent.includes("give up on step") || userContent.includes("answer for this step") || userContent.includes("show me the answer")) {
       simulatedResponse = "Alright, sometimes a step can be tricky! For the current step we are working on, you would typically need to provide an SQL clause. For example, if we were working on selecting columns, it might be `SELECT EmployeeID, FirstName, LastName`. What do you think the next logical step in solving the overall problem would be?";
-    } else if (userContent.includes("select") || userContent.includes("from") || userContent.includes("where") || userContent.includes("join") || userContent.includes("group by") || userContent.includes("order by")) {
-      // Simulate feedback on an SQL attempt
-      // More sophisticated simulation could try to parse the SQL or look for keywords.
-      if (userContent.length > 10 && (userContent.includes("employees") || userContent.includes("products"))) { // very basic check
-        simulatedResponse = "That's a good attempt for this step! Your SQL snippet looks plausible. Let's consider what comes next. Do we need to filter these results further, or perhaps join with another table?";
+
+    // Scenario 1: User provides plain English for a FROM clause (example)
+    } else if ((userContent.includes("data from") || userContent.includes("tables are") || userContent.includes("need records from") || userContent.includes("information from") || userContent.includes("use " + (userContent.match(/(\w+)\s+and\s+(\w+)/)?.[1] || "") ) ) && !isSqlAttempt) {
+        // Try to crudely extract table names if user mentions them
+        let table1 = "TableA";
+        let table2 = "TableB";
+        const tableMatch = userContent.match(/(?:tables|data from|records from|use)\s*(\w+)\s*(?:and|,)?\s*(\w+)?/);
+        if (tableMatch) {
+            table1 = tableMatch[1] || table1;
+            table2 = tableMatch[2] || table2;
+        }
+        simulatedResponse = `I understand you're thinking about the '${table1}' ${table2 !== 'TableB' ? `and '${table2}' ` : ''}table(s). When using multiple tables like these, we often need to join them. The SQL might look something like: \`FROM ${table1} t1 JOIN ${table2} t2 ON t1.common_column = t2.common_column\`. Could you try writing the specific FROM and JOIN clause for your problem?`;
+
+    // Scenario 2: User provides partial SQL for a FROM clause (example)
+    } else if (userContent.startsWith("from ") && userContent.includes("join") && !userContent.includes(" on ")) {
+        simulatedResponse = `That's a good start on the FROM clause! To complete the join, we need an \`ON\` condition. For example: \`FROM Table1 t1 JOIN Table2 t2 ON t1.CommonColumn = t2.CommonColumn\`. What are the actual columns that link your tables?`;
+
+    // Scenario 3: User provides plain English for a WHERE clause (example)
+    } else if ((userContent.includes("filter by") || userContent.includes("where ") || userContent.includes("condition is")) && !isSqlAttempt && !isShortInput) {
+        simulatedResponse = "Okay, you want to filter based on a condition. For instance, if you wanted to find records where 'Salary' is greater than 50000, the SQL would be `WHERE Salary > 50000`. Can you try writing the specific WHERE clause for this problem based on the requirements?";
+
+    // Scenario 4: User provides obviously incomplete WHERE clause
+    } else if (userContent.startsWith("where ") && (userContent.endsWith(">") || userContent.endsWith("<") || userContent.endsWith("=") || userContent.endsWith(" like"))) {
+        simulatedResponse = `Good start on that \`WHERE\` clause! It looks like you've specified a condition like \`${userContentOriginal} ...\`. What value or pattern should complete this condition?`;
+
+    // Existing SQL attempt logic (fallback)
+    } else if (isSqlAttempt) {
+      if (userContent.includes("from") && userContent.includes("join") && userContent.includes("on")) { // Reasonably complete JOIN
+        simulatedResponse = "Excellent! That JOIN condition looks correct. Now that we've specified our tables, we usually need to filter the data. What `WHERE` clause conditions do we need for this problem?";
+      } else if (userContent.includes("from")) { // Simple FROM without join, or incomplete join
+        simulatedResponse = "Good start with the `FROM` clause. If you need to join another table, remember to use `JOIN` and `ON`. Otherwise, what's the next step? Usually, it's filtering with `WHERE` or selecting columns with `SELECT`.";
+      } else if (userContent.includes("where")) { // More complete WHERE clause
+        simulatedResponse = "Okay, that `WHERE` clause seems to capture some conditions. Are there any more conditions, or are we ready to specify which columns to `SELECT`?";
+      } else if (userContent.includes("select")) {
+        simulatedResponse = "Alright, you've specified the columns in the `SELECT` clause. Is your query complete now, or are there other clauses like `ORDER BY` or `GROUP BY` needed for this problem?";
+      } else if (userContent.length > 5) { // A slightly more generic "good attempt" for shorter SQL snippets
+        simulatedResponse = "Okay, that's a step in the right direction. How would you build on that for the current part of the problem?";
       } else {
-        simulatedResponse = "Hmm, that SQL doesn't look quite right for what we're trying to achieve in this step. Could you double-check your table and column names, or perhaps the SQL keyword you're using? For example, ensure all selected columns exist in the tables mentioned in the FROM clause.";
+        simulatedResponse = "Hmm, that SQL doesn't look quite right for what we're trying to achieve in this step. Could you double-check your table and column names, or perhaps the SQL keyword you're using?";
       }
-    } else if (userContent.startsWith("problem description:")) {
-      // This case should ideally be handled by getFirstGuidance.
-      // If it reaches here, it implies an unexpected state or a new problem submission mid-conversation.
+    } else if (userContent.startsWith("problem description:")) { // Should be less common now
       simulatedResponse = "It looks like you might be trying to define a new problem. If so, please use the problem submission form. If you're continuing with the current problem, what SQL would you like to try for this step?";
     }
   }
